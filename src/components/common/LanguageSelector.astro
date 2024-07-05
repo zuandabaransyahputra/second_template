@@ -1,0 +1,75 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Language {
+  code: string;
+  label: string;
+  link: string;
+}
+
+const languages: Array<Language> = [
+  { code: 'en', label: 'EN', link: '/' },
+  { code: 'fr', label: 'FR', link: '/fr' },
+  { code: 'it', label: 'IT', link: '/it' },
+  { code: 'es', label: 'ES', link: '/es' },
+];
+
+const currentLanguage = 'en'; // Set default language to English
+---
+
+<div class="relative">
+  <button
+    id="language-button"
+    class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center"
+    aria-expanded="false"
+  >
+    <Icon name="tabler:language" class="w-6 h-6 md:w-5 md:h-5 md:inline-block" />
+    <span class="ml-2" id="current-language">{languages.find((lang) => lang.code === currentLanguage)?.label}</span>
+    <Icon name="tabler:chevron-down" class="w-4 h-4 ml-1" />
+  </button>
+  <ul
+    id="language-dropdown"
+    class="hidden absolute bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 pt-1 rounded shadow-lg"
+  >
+    {
+      languages.map(({ code, label, link }) => (
+        <li class="cursor-pointer">
+          <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700" href={`${link}`} data-lang={code}>
+            {label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const button: any = document.getElementById('language-button');
+    const dropdown: any = document.getElementById('language-dropdown');
+    const currentLang: any = document.getElementById('current-language');
+
+    button.addEventListener('click', function () {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', !expanded);
+      dropdown.classList.toggle('hidden');
+    });
+
+    dropdown.addEventListener('click', function (event) {
+      const lang = event.target.getAttribute('data-lang');
+      if (lang) {
+        // Handle language change logic here
+        currentLang.textContent = event.target.textContent;
+        button.setAttribute('aria-expanded', 'false');
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+        button.setAttribute('aria-expanded', 'false');
+        dropdown.classList.add('hidden');
+      }
+    });
+  });
+</script>
